@@ -3,7 +3,6 @@ import (
 	"...\internal\common\objects\BaseBiker.go"
 )
 
-type BikerAction int
 
 func getReputation(agent_id uuid.UUID) float64 
 {
