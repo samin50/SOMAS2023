@@ -7,7 +7,7 @@ import colorsys
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIButton, UILabel, ui_text_box
-from visualiser.util.Constants import DIM, BGCOLOURS, MAXZOOM, MINZOOM, ZOOM, BIKE
+from visualiser.util.Constants import DIM, BGCOLOURS, MAXZOOM, MINZOOM, ZOOM, BIKE, OVERLAY, PRECISION
 from visualiser.util.HelperFunc import make_center
 from visualiser.entities.Bikes import Bike
 from visualiser.entities.Lootboxes import Lootbox
@@ -34,6 +34,8 @@ class GameScreen:
         self.playSpeed = 1
         self.isPlaying = False
         self.playEvent = pygame.USEREVENT + 100
+        self.mouseXCur = 0
+        self.mouseYCur = 0
 
     def init_ui(self, manager:pygame_gui.UIManager, screen:pygame_gui.core.UIContainer) -> dict:
         """
@@ -179,6 +181,7 @@ class GameScreen:
         # # Draw agents
         for bike in self.bikes:
             bike.draw(screen, self.offsetX, self.offsetY, self.zoom)
+        self.draw_mouse_coords(screen)
         # Divider line
         lineWidth = 1
         pygame.draw.line(screen, "#555555", (DIM["GAME_SCREEN_WIDTH"]-lineWidth, 0), (DIM["GAME_SCREEN_WIDTH"]-lineWidth, DIM["SCREEN_HEIGHT"]), lineWidth)
@@ -207,12 +210,12 @@ class GameScreen:
                     self.dragging = False
             #Pan screen
             case pygame.MOUSEMOTION:
+                self.mouseXCur, self.mouseYCur = event.pos
                 if self.dragging:
-                    mouseX, mouseY = event.pos
                     # Reverse the direction of the offset updates
-                    self.offsetX += mouseX - self.mouseX
-                    self.offsetY += mouseY - self.mouseY
-                    self.mouseX, self.mouseY = mouseX, mouseY
+                    self.offsetX += self.mouseXCur - self.mouseX
+                    self.offsetY += self.mouseYCur - self.mouseY
+                    self.mouseX, self.mouseY = self.mouseXCur, self.mouseYCur
             # Handle key presses
             case pygame.KEYDOWN:
                 match event.key:
@@ -308,10 +311,10 @@ class GameScreen:
         """
         mouseX, mouseY = mousePos
         for bike in self.bikes:
-            bike.propagate_click(mouseX, mouseY, self.offsetX, self.offsetY, self.zoom)
+            bike.propagate_click(mouseX, mouseY, self.zoom)
         for lootbox in self.lootboxes:
-            lootbox.propagate_click(mouseX, mouseY, self.offsetX, self.offsetY, self.zoom)
-        self.awdi.propagate_click(mouseX, mouseY, self.offsetX, self.offsetY, self.zoom)
+            lootbox.propagate_click(mouseX, mouseY, self.zoom)
+        self.awdi.propagate_click(mouseX, mouseY, self.zoom)
 
     def adjust_zoom(self, zoomFactor:float, mousePos:tuple) -> None:
         """
@@ -341,6 +344,16 @@ class GameScreen:
         # Draw horizontal lines
         for y in range(-int(zoomedSpacing) + int(startY), height, int(zoomedSpacing)):
             pygame.draw.line(surface, BGCOLOURS["GRID"], (0, y), (width, y))
+
+    def draw_mouse_coords(self, surface:pygame.Surface) -> None:
+        """
+        Draw the mouse coordinates on the game screen
+        """
+        font = pygame.font.SysFont("Arial", 15)
+        x = round(self.mouseXCur / self.zoom - self.offsetX / self.zoom, PRECISION)
+        y = round(self.mouseYCur / self.zoom - self.offsetY / self.zoom, PRECISION)
+        text = font.render(f"({x}, {y})", True, (0, 0, 0))
+        surface.blit(text, (OVERLAY["FPS_PAD"], OVERLAY["FPS_PAD"]))
 
     def set_json(self, data:dict) -> None:
         """

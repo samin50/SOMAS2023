@@ -66,32 +66,21 @@ class Bike(Drawable):
         for agent in agentJson:
             self.agentList[agent["id"]] = Agent(self.x, self.y, agent["colour"], "?", agent, agent)
 
-    def propagate_click(self, mouseX:int, mouseY:int, offsetX:int, offsetY:int, zoom:float) -> None:
+    def propagate_click(self, mouseX:int, mouseY:int, zoom:float) -> None:
         """
         Propagate the click to the agents within the bike
         """
         intersected = False
         for agent in self.agentList.values():
-            if agent.click(mouseX, mouseY, offsetX, offsetY, zoom):
+            if agent.click(mouseX, mouseY, zoom):
                 intersected = True
         # If an agent was not interacted with, check bike
         if not intersected:
-            self.click(mouseX, mouseY, offsetX, offsetY, zoom)
+            self.click(mouseX, mouseY, zoom)
 
-    def check_collision(self, mouseX: int, mouseY: int, offsetX: int, offsetY: int, zoom: float) -> bool:
+    def check_collision(self, mouseX: int, mouseY: int, zoom:float) -> bool:
         """
         Check if the mouse click intersects with the bike.
         """
         return (self.trueX <= mouseX <= self.trueX + self.squareSide) and \
                (self.trueY <= mouseY <= self.trueY + self.squareSide)
-
-    # def change_round(self, json:dict) -> None:
-    #     """
-    #     Change the current round for the agents
-    #     """
-    #     self.set_agents(json[self.id]["agents"])
-    #     for agentid, agent in self.agentList.items():
-    #         agent.change_round(json[self.id]["agents"][agentid])
-    #     self.properties = {
-    #         "Position" : f"{json[self.id]['position']['x']}, {json[self.id]['position']['y']}",
-    #     }

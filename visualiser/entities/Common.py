@@ -10,8 +10,8 @@ class Drawable:
             self.x = round(jsonData["physical_state"]["position"]["x"]*COORDINATESCALE, PRECISION)
             self.y = round(jsonData["physical_state"]["position"]["y"]*COORDINATESCALE, PRECISION)
         else:
-            self.x = x*COORDINATESCALE
-            self.y = y*COORDINATESCALE
+            self.x = round(x*COORDINATESCALE, PRECISION)
+            self.y = round(y*COORDINATESCALE, PRECISION)
         self.trueX = self.x
         self.trueY = self.y
         self.clicked = False
@@ -22,14 +22,14 @@ class Drawable:
         }
         self.overlay = pygame.Surface((0, 0))
 
-    def click(self, mouseX:int, mouseY:int, offsetX:int, offsetY:int, zoom:float) -> bool:
+    def click(self, mouseX:int, mouseY:int, zoom:float) -> bool:
         """
         Check if the mouse click intersects with the agent.
         """
         if (mouseX, mouseY) == (-1, -1):
             self.clicked = False
             return False
-        self.clicked = self.check_collision(mouseX, mouseY, offsetX, offsetY, zoom)
+        self.clicked = self.check_collision(mouseX, mouseY, zoom)
         if self.clicked:
             print(f"Clicked on {self.id} at ({self.x}, {self.y})")
         return self.clicked
@@ -76,7 +76,7 @@ class Drawable:
         border.set_alpha(OVERLAY["TRANSPARENCY"])
         return border
 
-    def check_collision(self, mouseX:int, mouseY:int, offsetX:int, offsetY:int, zoom:float) -> bool:
+    def check_collision(self, mouseX:int, mouseY:int, zoom:float) -> bool:
         """
         Check if the mouse click intersects with the agent.
         """
@@ -88,9 +88,3 @@ class Drawable:
         """
         if self.clicked:
             screen.blit(self.overlay, (self.trueX, self.trueY))
-
-    # def change_round(self, json:dict) -> None:
-    #     """
-    #     Change the round of the agent
-    #     """
-    #     raise NotImplementedError

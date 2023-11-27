@@ -42,7 +42,7 @@ AWDI = {
     "LINE_WIDTH": 2,
     "LINE_COLOUR": "#000000",
     "FONT_SIZE": 30,
-    "SIZE": 100,
+    "SIZE": 60,
 }
 AGENT = {
     "SIZE": 10,
