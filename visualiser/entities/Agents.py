@@ -25,7 +25,7 @@ class Agent(Drawable):
         }
         self.properties.update(properties)
 
-    def check_collision(self, mouseX:int, mouseY:int, offsetX:int, offsetY:int, zoom:float) -> bool:
+    def check_collision(self, mouseX:int, mouseY:int, zoom:float) -> bool:
         """
         Check if the mouse click intersects with the agent.
         """
@@ -54,13 +54,3 @@ class Agent(Drawable):
         textRect.center = (self.trueX, self.trueY)
         screen.blit(text, textRect)
         self.overlay = self.update_overlay(zoom)
-
-    def change_round(self, json:dict) -> None:
-        """
-        Change the agent's properties based on the round
-        """
-        self.colour = COLOURS[json["colour"]]
-        self.properties = {
-            "Points:" : json["points"],
-            "Energy" : json["energy"],
-        }
