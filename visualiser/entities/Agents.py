@@ -9,14 +9,11 @@ from visualiser.util.Constants import AGENT, COLOURS, PRECISION
 from visualiser.entities.Common import Drawable
 
 class Agent(Drawable):
-    def __init__(self, x:int, y:int, colour:pygame.color, groupID, agentID, jsonData:dict) -> None:
-        super().__init__(jsonData, x, y)
+    def __init__(self, x:int, y:int, agentid:str, colour:pygame.color, groupID, jsonData:dict) -> None:
+        super().__init__(agentid, jsonData, x, y)
         self.colour = COLOURS[colour]
         self.radius = AGENT["SIZE"]
         self.groupID = groupID
-        self.id = agentID
-        self.x = x
-        self.y = y
         properties = {
             "Pedal" : jsonData["forces"]["pedal"],
             "Brake" : jsonData["forces"]["brake"],

@@ -9,7 +9,7 @@ from visualiser.entities.Common import Drawable
 
 class Awdi(Drawable):
     def __init__(self, jsonData:dict) -> None:
-        super().__init__(jsonData)
+        super().__init__("audi", jsonData)
         self.colour = AWDI["COLOUR"]
         properties = {
             "Target" : jsonData["target_bike"],

@@ -8,8 +8,8 @@ from visualiser.util.Constants import LOOTBOX, OVERLAY, COLOURS
 from visualiser.entities.Common import Drawable
 
 class Lootbox(Drawable):
-    def __init__(self, jsonData:dict) -> None:
-        super().__init__(jsonData)
+    def __init__(self, lootboxid:str, jsonData:dict) -> None:
+        super().__init__(lootboxid, jsonData)
         self.colour = COLOURS[jsonData["colour"]]
         properties = {
             "Acceleration" : jsonData["physical_state"]["acceleration"],

@@ -173,10 +173,10 @@ class GameScreen:
         self.draw_grid(screen)
         # Draw awdi
         self.awdi.draw(screen, self.offsetX, self.offsetY, self.zoom)
-        # Draw lootboxes
+        # # Draw lootboxes
         for lootbox in self.lootboxes:
             lootbox.draw(screen, self.offsetX, self.offsetY, self.zoom)
-        # # Draw agents
+        # Draw agents
         for bike in self.bikes:
             bike.draw(screen, self.offsetX, self.offsetY, self.zoom)
         # Divider line
@@ -279,16 +279,14 @@ class GameScreen:
         self.elements["round_count"].set_text(f"Round: {self.round}")
         #Reload bikes
         self.bikes = []
-        bikeData = self.jsonData[self.round]["bikes"]
-        for bike in bikeData:
-            if bike["id"] not in self.bikeColourMap:
-                self.bikeColourMap[bike["id"]] = self.allocate_colour()
-            self.bikes.append(Bike(bike, self.bikeColourMap[bike["id"]]))
+        for bikeid, bike in self.jsonData[self.round]["bikes"].items():
+            if bikeid not in self.bikeColourMap:
+                self.bikeColourMap[bikeid] = self.allocate_colour()
+            self.bikes.append(Bike(bikeid, bike, self.bikeColourMap[bikeid], self.jsonData[self.round]["agents"]))
         # Reload lootboxes
         self.lootboxes = []
-        lootboxData = self.jsonData[self.round]["loot_boxes"]
-        for lootbox in lootboxData:
-            self.lootboxes.append(Lootbox(lootbox))
+        for lootboxid, lootbox in self.jsonData[self.round]["loot_boxes"].items():
+            self.lootboxes.append(Lootbox(lootboxid, lootbox))
         self.awdi = Awdi(self.jsonData[self.round]["audi"])
 
     def allocate_colour(self) -> str:

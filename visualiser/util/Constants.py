@@ -5,7 +5,7 @@ Constants used for the visualiser.
 WINDOW_TITLE = "SOMAS Visualiser"
 FRAMERATE = 60
 MINZOOM, MAXZOOM, ZOOM = 0.2, 2.5, 0.5
-COORDINATESCALE = 1.5
+COORDINATESCALE = 15
 PRECISION = 2
 # JSONPATH = "./internal/clients/team_5/visualiser/json/test2.json"
 JSONPATH = "game_dump.json"

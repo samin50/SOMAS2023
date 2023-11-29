@@ -10,9 +10,10 @@ from visualiser.entities.Agents import Agent
 from visualiser.entities.Common import Drawable
 
 class Bike(Drawable):
-    def __init__(self, jsonData:dict, colour:str) -> None:
-        super().__init__(jsonData)
+    def __init__(self, bikeid:str, jsonData:dict, colour:str, agentData:dict) -> None:
+        super().__init__(bikeid, jsonData)
         self.agentList = dict()
+        self.agentData = jsonData["agent_ids"]
         self.squareSide = 0
         self.colour = colour
         properties = {
@@ -21,7 +22,7 @@ class Bike(Drawable):
             "Mass" : jsonData["physical_state"]["mass"],
         }
         self.properties.update(properties)
-        self.set_agents(jsonData["agents"])
+        self.set_agents(agentData)
 
     def draw(self, screen:pygame_gui.core.UIContainer, offsetX:int, offsetY:int, zoom:float) -> None:
         """
@@ -63,8 +64,8 @@ class Bike(Drawable):
         Set the agents that are in the bike
         """
         self.agentList = dict()
-        for agent in agentJson:
-            self.agentList[agent["id"]] = Agent(self.x, self.y, agent["colour"], "?", agent, agent)
+        for agentid in self.agentData:
+            self.agentList[agentid] = Agent(self.x, self.y, agentid, agentJson[agentid]["colour"], "?", agentJson[agentid])
 
     def propagate_click(self, mouseX:int, mouseY:int, offsetX:int, offsetY:int, zoom:float) -> None:
         """

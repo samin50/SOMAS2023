@@ -5,17 +5,17 @@ import pygame
 import pygame_gui
 from visualiser.util.Constants import OVERLAY, COORDINATESCALE, PRECISION
 class Drawable:
-    def __init__(self, jsonData:dict, x=None, y=None) -> None:
-        if x is None:
+    def __init__(self, entityid:str, jsonData:dict, x=None, y=None) -> None:
+        if x is None or y is None:
             self.x = round(jsonData["physical_state"]["position"]["x"]*COORDINATESCALE, PRECISION)
             self.y = round(jsonData["physical_state"]["position"]["y"]*COORDINATESCALE, PRECISION)
         else:
-            self.x = x*COORDINATESCALE
-            self.y = y*COORDINATESCALE
+            self.x = round(x*COORDINATESCALE, PRECISION)
+            self.y = round(y*COORDINATESCALE, PRECISION)
         self.trueX = self.x
         self.trueY = self.y
         self.clicked = False
-        self.id = jsonData["id"]
+        self.id = entityid
         self.properties = {
             "ID" : self.id,
             "Position" : f"{self.x}, {self.y}",
