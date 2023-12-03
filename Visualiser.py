@@ -1,7 +1,7 @@
 """
 Visualiser for SOMAS world
 """
-# pylint: disable=no-member, import-error, no-name-in-module
+# pylint: disable=no-member, import-error, no-name-in-module, pointless-string-statement
 import tkinter as tk
 from tkinter import filedialog
 import json
@@ -208,3 +208,11 @@ if __name__ == "__main__":
     visualiser = Visualiser()
     visualiser.test()
     # visualiser.run_loop()
+
+"""
+how many consumed lootboxes (transparent overlay)
+current number of agents
+current number of bikes
+average energy of agents that are alive
+average points of agents that are alive
+""" 
