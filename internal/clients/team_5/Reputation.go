@@ -42,24 +42,25 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 	colourRep := 0.0
 	//get all agent colours of all agents and check if they are the same as the agentID
 	if (t5.GetColour()) == (t5.GetGameState().GetAgents()[agentID].GetColour()) {
-		colourRep = 0.1
+		colourRep = 0.01
 	}
 
 	agentEnergy := t5.getEnergyOfOneAgent(agentID)
-	energyDeviation := agentEnergy / averageEnergy
+	energyDeviation := agentEnergy - averageEnergy
+	fmt.Println("anget energy: ", agentEnergy, " average energy: ", averageEnergy, " energy deviation: ", energyDeviation)
 	combinedDeviation := energyDeviation //(forceDeviation + energyDeviation) / 2 // keeps it in range [0,1]
 
 	// get current reputation of the agent
 
-	weight := 0.2                                                     //maximum change per round
-	newRep := currentRep + combinedDeviation*weight + colourRep - 0.2 // (combinedDeviation-1)*weight
+	weight := 0.2
+	newRep := currentRep + combinedDeviation*weight + colourRep
 	if newRep > 0.5 {
 		newRep = newRep - forgivenessRate
 	} else if newRep < 0.5 {
 		newRep = newRep + forgivenessRate
 	}
-	rValue := math.Min(math.Max(newRep, 0), 1)
-	fmt.Println("Reputation of agent: ", agentID, " is: ", rValue)
+	rValue := math.Min(math.Max(newRep, 0.0), 1.0)
+	fmt.Println("Reputation of agent: ", agentID, " is: ", newRep)
 	return rValue //capped at 0 and 1
 
 }
