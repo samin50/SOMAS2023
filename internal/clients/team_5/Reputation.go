@@ -30,6 +30,7 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 	//fmt.Println("DONT BE nan: ", currentRep)
 	//averagePedalForce := t5.getAverageForceOfAgents()
 	averageEnergy := t5.getAverageEnergyOfAgents()
+	fmt.Println("averageEnergy: ", averageEnergy)
 	//fmt.Println("averagePedalForce: ", averagePedalForce, "averageEnergy: ", averageEnergy)
 	//Colour of agent
 	//check energy allocation -> change of energy in each agent
@@ -48,7 +49,8 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 	// get current reputation of the agent
 
 	weight := 0.2 //maximum change per round
-	newRep := currentRep + (combinedDeviation-1)*weight
+	fmt.Println("CombinedDeviation: ", (combinedDeviation-1)*weight)
+	newRep := currentRep + combinedDeviation*weight // (combinedDeviation-1)*weight
 	rValue := math.Min(math.Max(newRep, 0), 1)
 	//fmt.Println("retun", rValue, newRep, currentRep, combinedDeviation, energyDeviation, forceDeviation, agentEnergy, agentPedalForce, averagePedalForce, averageEnergy, currentRep)
 	return rValue //capped at 0 and 1
