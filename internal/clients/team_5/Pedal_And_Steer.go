@@ -22,14 +22,14 @@ func (t5 *team5Agent) DecideForce(targetLootBoxID uuid.UUID) {
 	orientation := t5.GetGameState().GetMegaBikes()[t5.GetBike()].GetOrientation()
 	//fmt.Println("Current Location: ", currLocation)
 
-	nearestLoot := t5.ProposeDirection()
+	// nearestLoot := t5.ProposeDirection()
 	//fmt.Println("Nearest Loot ID: ", nearestLoot)
 
 	currentLootBoxes := t5.GetGameState().GetLootBoxes()
 	//fmt.Println("Number of Loot Boxes: ", len(currentLootBoxes))
 
 	if len(currentLootBoxes) > 0 {
-		targetPos := currentLootBoxes[nearestLoot].GetPosition()
+		targetPos := currentLootBoxes[targetLootBoxID].GetPosition()
 		//fmt.Println("Target Position: ", targetPos)
 
 		deltaXB := targetPos.X - currLocation.X
@@ -52,6 +52,11 @@ func (t5 *team5Agent) DecideForce(targetLootBoxID uuid.UUID) {
 		}
 
 		steer := (angleToGoal - orientation)
+		if steer < -1 {
+			steer = steer + 2
+		} else if steer > 1 {
+			steer = steer - 2
+		}
 
 		//fmt.Println("Bike Orientation: ", orientation)
 		///(float64(len(t5.GetMegaBike())));
@@ -70,8 +75,8 @@ func (t5 *team5Agent) DecideForce(targetLootBoxID uuid.UUID) {
 		Biker_pedal := utils.BikerMaxForce
 		//if our own agents on a bike or just us on a bike we use full force this is only when we are on a bike with other agents or more than 3 agents
 		if len(t5.GetGameState().GetMegaBikes()[t5.GetBike()].GetAgents()) > 3 {
-			if ownEnergyLevel < 0.2 {
-				Biker_pedal = ownEnergyLevel * utils.BikerMaxForce
+			if t5.state == 0 {
+				Biker_pedal = ownEnergyLevel * utils.BikerMaxForce * 0.5
 			}
 		}
 

@@ -3,14 +3,13 @@ package team5Agent
 import (
 	// Assuming this package contains the IMegaBike interface
 
-	"fmt"
 	"math"
 
 	"github.com/google/uuid"
 )
 
 func (t5 *team5Agent) InitialiseReputation() {
-	fmt.Println("HAHAHA: ", t5.GetReputation())
+	//fmt.Println("HAHAHA: ", t5.GetReputation())
 	megaBikes := t5.GetGameState().GetMegaBikes()
 	for _, mb := range megaBikes {
 		// Iterate through all agents on each MegaBike
@@ -19,7 +18,7 @@ func (t5 *team5Agent) InitialiseReputation() {
 			t5.SetReputation(agent.GetID(), 0.5)
 		}
 	}
-	fmt.Println("HAHAHA22: ", t5.GetReputation())
+	//fmt.Println("HAHAHA22: ", t5.GetReputation())
 
 }
 
@@ -52,74 +51,63 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 	fmt.Println("CombinedDeviation: ", (combinedDeviation-1)*weight)
 	newRep := currentRep + combinedDeviation*weight // (combinedDeviation-1)*weight
 	rValue := math.Min(math.Max(newRep, 0), 1)
-	//fmt.Println("retun", rValue, newRep, currentRep, combinedDeviation, energyDeviation, forceDeviation, agentEnergy, agentPedalForce, averagePedalForce, averageEnergy, currentRep)
+
 	return rValue //capped at 0 and 1
 }
-
-// func (t5 *team5Agent) updateReputationOfAllAgents() {
-// 	// if all agents have a reputation of 0 then update all to have a reputation of 0.5
-
-// 	reputationMap := t5.GetReputation()
-
-// 	if len(reputationMap) == 0 {
-// 		t5.InitialiseReputation()
-// 	}  else{
-
-// 		for agentID, reputaion := range t5.GetReputation() {
-// 			newRep := t5.calculateReputationOfAgent(agentID, reputaion)
-// 			t5.SetReputation(agentID, newRep)
-// 			fmt.Println(newRep)
-// 		}
-
-// 	}
-
-// 	fmt.Println("hnonljknjk")
-// 	fmt.Println(t5.GetReputation())
-
-// }
 
 func (t5 *team5Agent) updateReputationOfAllAgents() {
 	// if all agents have a reputation of 0 then update all to have a reputation of 0.5
 	reputationMap := t5.GetReputation()
-	fmt.Println("REPREP: ", reputationMap)
+
 	if len(reputationMap) == 0 {
-		fmt.Println("INITINIT")
 		t5.InitialiseReputation()
 	}
-	fmt.Println("RepMap: ", reputationMap)
+
 	for agentID, reputation := range reputationMap {
-		//fmt.Println("Reputation: ", reputation)
+
 		//if reuptation is NaN then set to 0.5
-		if (reputation == math.NaN()) || !(0 <= reputation && reputation <= 1) {
+		if !(0 <= reputation && reputation <= 1) {
 			t5.SetReputation(agentID, 0.5)
 			reputation = 0.5
 		}
-		fmt.Println("Reputation: ", reputation)
 		reputation = t5.calculateReputationOfAgent(agentID, reputation)
+		if reputation > 0.5 {
+			reputation -= 0.01
+		} else if reputation < 0.5 {
+			reputation += 0.01
+		}
 		t5.SetReputation(agentID, reputation)
-
-		fmt.Println("nonce:<", reputation)
 	}
+	t5.determineGreed()
+}
 
-	fmt.Println("hnonljknjk")
-	fmt.Println(t5.GetReputation())
+func (t5 *team5Agent) determineGreed() {
+	repMap := t5.CalculateEnergyChange(t5.GetBike())
+	myEnergyChange := repMap[t5.GetID()]
+	for agentID, energyChange := range repMap {
+		if energyChange > myEnergyChange {
+			t5.SetReputation(agentID, t5.QueryReputation(agentID)-0.05)
+		} else if energyChange < myEnergyChange {
+			t5.SetReputation(agentID, t5.QueryReputation(agentID)+0.05)
+		}
+	}
 }
 
 //Useful helper functions:
 
-func (t5 *team5Agent) getAveragePedalSpeedOfMegaBike(megaBikeID uuid.UUID) float64 {
-	megaBikes := t5.GetGameState().GetMegaBikes()
-	megaBike, exists := megaBikes[megaBikeID]
-	if !exists {
-		return 0
-	}
-	agents := megaBike.GetAgents()
-	var totalPedalSpeed float64
-	for _, agent := range agents {
-		totalPedalSpeed += agent.GetForces().Pedal
-	}
-	return totalPedalSpeed / float64(len(agents))
-}
+// func (t5 *team5Agent) getAveragePedalSpeedOfMegaBike(megaBikeID uuid.UUID) float64 {
+// 	megaBikes := t5.GetGameState().GetMegaBikes()
+// 	megaBike, exists := megaBikes[megaBikeID]
+// 	if !exists {
+// 		return 0
+// 	}
+// 	agents := megaBike.GetAgents()
+// 	var totalPedalSpeed float64
+// 	for _, agent := range agents {
+// 		totalPedalSpeed += agent.GetForces().Pedal
+// 	}
+// 	return totalPedalSpeed / float64(len(agents))
+// }
 
 // Functions used in calculating the reputation value:
 
