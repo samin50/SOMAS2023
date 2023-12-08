@@ -3,7 +3,6 @@ package team5Agent
 import (
 	// Assuming this package contains the IMegaBike interface
 
-	"fmt"
 	"math"
 
 	"github.com/google/uuid"
@@ -47,7 +46,7 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 
 	agentEnergy := t5.getEnergyOfOneAgent(agentID)
 	energyDeviation := agentEnergy - averageEnergy
-	fmt.Println("anget energy: ", agentEnergy, " average energy: ", averageEnergy, " energy deviation: ", energyDeviation)
+	//fmt.Println("anget energy: ", agentEnergy, " average energy: ", averageEnergy, " energy deviation: ", energyDeviation)
 	combinedDeviation := energyDeviation //(forceDeviation + energyDeviation) / 2 // keeps it in range [0,1]
 
 	// get current reputation of the agent
@@ -60,7 +59,7 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 		newRep = newRep + forgivenessRate
 	}
 	rValue := math.Min(math.Max(newRep, 0.0), 1.0)
-	fmt.Println("Reputation of agent: ", agentID, " is: ", newRep)
+	//fmt.Println("Reputation of agent: ", agentID, " is: ", newRep)
 	return rValue //capped at 0 and 1
 
 }
