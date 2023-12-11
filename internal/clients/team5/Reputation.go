@@ -14,11 +14,10 @@ func (t5 *team5Agent) InitialiseReputation() {
 	for _, mb := range megaBikes {
 		// Iterate through all agents on each MegaBike
 		for _, agent := range mb.GetAgents() {
-			// Set initial reputation to 0.5 for each agent
+			// Set initial reputation to 0.5 for each agent (out system is 0 to 1 not -1 to 1)
 			t5.SetReputation(agent.GetID(), 0.5)
 		}
 	}
-	//fmt.Println("HAHAHA22: ", t5.GetReputation())
 
 }
 
@@ -27,11 +26,7 @@ func (t5 *team5Agent) InitialiseReputation() {
 // Reputation calculation currently just based on energy and force
 func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep float64) float64 {
 	//Colour of agent
-	//check energy allocation -> change of energy in each agent
-	//if bike speed slow - lower everyone by small amount
-	//if direction wrong a lot - lower everyone by small amount
 	//Increase forgivenesss rate if in ultristic state
-	//Msging stuff - increase rep of people who msg
 	averageEnergy := t5.getAverageEnergyOfAgents()
 
 	forgivenessRate := 0.0005 //Reputation slowly goes back to average over time = forgiveness.
@@ -40,16 +35,16 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 	}
 	colourRep := 0.0
 	//get all agent colours of all agents and check if they are the same as the agentID
-	if (t5.GetColour()) == (t5.GetGameState().GetAgents()[agentID].GetColour()) {
-		colourRep = 0.01
+	//if agent exists on map and agent colour is the same as the agentID then add 0.01 to colourRep
+	if agent, ok := t5.GetGameState().GetAgents()[agentID]; ok {
+		if (t5.GetColour()) == agent.GetColour() {
+			colourRep = 0.01
+		}
 	}
 
 	agentEnergy := t5.getEnergyOfOneAgent(agentID)
 	energyDeviation := agentEnergy - averageEnergy
-	//fmt.Println("anget energy: ", agentEnergy, " average energy: ", averageEnergy, " energy deviation: ", energyDeviation)
 	combinedDeviation := energyDeviation //(forceDeviation + energyDeviation) / 2 // keeps it in range [0,1]
-
-	// get current reputation of the agent
 
 	weight := 0.2
 	newRep := currentRep + combinedDeviation*weight + colourRep
@@ -59,8 +54,8 @@ func (t5 *team5Agent) calculateReputationOfAgent(agentID uuid.UUID, currentRep f
 		newRep = newRep + forgivenessRate
 	}
 	rValue := math.Min(math.Max(newRep, 0.0), 1.0)
-	//fmt.Println("Reputation of agent: ", agentID, " is: ", newRep)
-	return rValue //capped at 0 and 1
+	//fmt.Println("Reputation of agent: ", agentID, " is: ", rValue)
+	return rValue //capped at 0 and 1 (our internal reputation system is 0 to 1 not -1 to 1)
 
 }
 
@@ -154,36 +149,7 @@ func (t5 *team5Agent) getReputationOfAllBikes() map[uuid.UUID]float64 {
 	return reputations
 }
 
-// func (t5 *team5Agent) getForceOfOneAgent(agentID uuid.UUID) float64 {
-// 	megaBikes := t5.GetGameState().GetMegaBikes()
-// 	for _, megaBike := range megaBikes {
-// 		agents := megaBike.GetAgents()
-// 		for _, agent := range agents {
-// 			if agent.GetID() == agentID {
-// 				return agent.GetForces().Pedal
-// 			}
-// 		}
-// 	}
-// 	return 0
-// }
-
-// func (t5 *team5Agent) getAverageForceOfAgents() float64 {
-// 	megaBikes := t5.GetGameState().GetMegaBikes()
-// 	var totalForce float64
-// 	var totalAgents float64
-// 	for _, megaBike := range megaBikes {
-// 		agents := megaBike.GetAgents()
-// 		for _, agent := range agents {
-// 			forceOfAgent := agent.GetForces().Pedal
-// 			if forceOfAgent > 0 { //only add force if agent is pedalling
-// 				totalForce += forceOfAgent
-// 				totalAgents++
-// 			}
-// 		}
-// 	}
-// 	return 1
-// }
-
+//Not useful anymore after pedal force was hidden
 // func (t5 *team5Agent) getAveragePedalSpeedOfMegaBike(megaBikeID uuid.UUID) float64 {
 // 	megaBikes := t5.GetGameState().GetMegaBikes()
 // 	megaBike, exists := megaBikes[megaBikeID]

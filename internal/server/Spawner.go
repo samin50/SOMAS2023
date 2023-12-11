@@ -18,8 +18,8 @@ var AgentInitFunctions = []AgentInitFunction{
 	nil,                 // Base Biker
 	team1.GetBiker1,     // Team 1
 	team2.GetBiker,      // Team 2
-	team8.GetIBaseBiker, // Team 8
 	team5Agent.GetBiker, // Team 5
+	team8.GetIBaseBiker, // Team 8
 }
 
 func GetAgentGenerators() []baseserver.AgentGeneratorCountPair[objects.IBaseBiker] {
